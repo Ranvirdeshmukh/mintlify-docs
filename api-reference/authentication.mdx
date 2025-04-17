@@ -1,0 +1,170 @@
+---
+title: 'API Authentication'
+description: 'Learn how to authenticate with the SignPact API'
+---
+
+# API Authentication
+
+SignPact uses bearer token authentication for API requests. This guide explains how to authenticate with our API.
+
+## Authentication Flow
+
+Based on our frontend implementation, SignPact uses a JWT (JSON Web Token) based authentication system:
+
+1. Users authenticate with their email and password
+2. Upon successful authentication, the server issues a JWT token
+3. This token must be included in the Authorization header of all API requests
+4. Tokens have an expiration time, after which they must be refreshed
+
+## Getting a Token
+
+You can obtain an authentication token through one of the following methods:
+
+### Password Authentication
+
+```javascript
+const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:8000/api';
+
+async function login(email, password) {
+  const response = await fetch(`${API_URL}/auth/login`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      email,
+      password
+    })
+  });
+  
+  if (!response.ok) {
+    throw new Error('Authentication failed');
+  }
+  
+  const data = await response.json();
+  return data.token; // Store this token securely
+}
+```
+
+### OAuth Authentication
+
+SignPact also supports Google OAuth authentication as shown in our codebase:
+
+```javascript
+// Example from frontend/src/App.js
+<GoogleOAuthProvider clientId="92668879435-qftp70jcjucam3jkgd0b1er3fv43n28t.apps.googleusercontent.com">
+  <AuthProvider>
+    {/* Application content */}
+  </AuthProvider>
+</GoogleOAuthProvider>
+```
+
+To use Google OAuth, implement the OAuth 2.0 flow following Google's guidelines, then exchange the OAuth token for a SignPact JWT token.
+
+## Using the Token
+
+Include the token in the Authorization header of all API requests:
+
+```javascript
+async function fetchWithAuth(endpoint, options = {}) {
+  // Get token from secure storage
+  const token = localStorage.getItem('user') 
+    ? JSON.parse(localStorage.getItem('user')).token 
+    : null;
+  
+  if (!token) {
+    throw new Error('User not authenticated');
+  }
+  
+  const headers = {
+    'Content-Type': 'application/json',
+    'Authorization': `Bearer ${token}`,
+    ...options.headers,
+  };
+  
+  const response = await fetch(`${API_URL}${endpoint}`, {
+    ...options,
+    headers,
+  });
+  
+  if (!response.ok) {
+    // Handle 401 Unauthorized - token expired or invalid
+    if (response.status === 401) {
+      // Handle token expiration
+      throw new Error('Session expired. Please login again.');
+    }
+    
+    const error = await response.json();
+    throw new Error(error.message || 'Something went wrong');
+  }
+  
+  return response.json();
+}
+```
+
+## Token Expiration and Refresh
+
+JWT tokens have an expiration time. When a token expires, your application should detect the 401 Unauthorized response and handle it appropriately:
+
+```javascript
+// Check token validity
+const isTokenExpired = (token) => {
+  if (!token) return true;
+  
+  try {
+    // Decode JWT payload
+    const payload = JSON.parse(atob(token.split('.')[1]));
+    
+    // Check if token is expired
+    const currentTime = Math.floor(Date.now() / 1000);
+    return payload.exp < currentTime;
+  } catch (e) {
+    return true;
+  }
+};
+
+// Refresh token function
+const refreshToken = async (refreshToken) => {
+  const response = await fetch(`${API_URL}/auth/refresh`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      refreshToken
+    })
+  });
+  
+  if (!response.ok) {
+    throw new Error('Failed to refresh token');
+  }
+  
+  const data = await response.json();
+  return data.token;
+};
+```
+
+## Security Best Practices
+
+When working with API authentication:
+
+1. **Store tokens securely**: Use secure storage mechanisms like HTTP-only cookies or secure browser storage
+2. **Implement HTTPS**: Always use HTTPS for API requests to encrypt the token in transit
+3. **Token scope**: Request only the permissions your application needs
+4. **Validate tokens**: Implement proper token validation on both client and server
+5. **Handle expiration**: Gracefully handle token expiration and refresh flows
+6. **Logout properly**: Clear tokens from storage when users log out
+
+## API Errors
+
+Authentication-related error responses:
+
+| Status Code | Description | How to Handle |
+|-------------|-------------|---------------|
+| 401 | Unauthorized - Invalid or expired token | Prompt user to log in again or refresh token |
+| 403 | Forbidden - Valid token but insufficient permissions | Inform user they lack permission |
+| 422 | Validation Error - Malformed authentication request | Check request format and credentials |
+
+## Next Steps
+
+Now that you understand how to authenticate with the SignPact API, proceed to the [API Endpoints](/api-reference/endpoints) documentation to learn about the available endpoints and how to use them. 

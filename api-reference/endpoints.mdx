@@ -1,0 +1,363 @@
+---
+title: 'API Endpoints'
+description: 'Reference for the SignPact API endpoints'
+---
+
+# API Endpoints
+
+The SignPact API provides a comprehensive set of endpoints for interacting with documents, users, and signatures.
+
+<Note>
+All API requests require authentication with a valid JWT token as documented in the [Authentication](/api-reference/authentication) section.
+</Note>
+
+## Base URL
+
+```
+http://localhost:8000/api
+```
+
+In production, this will be replaced with your deployed API URL.
+
+## Document Endpoints
+
+Based on our frontend implementation, the following document endpoints are available:
+
+### Get User Documents
+
+Retrieves all documents accessible to the authenticated user.
+
+```
+GET /documents
+```
+
+**Response**
+
+```json
+[
+  {
+    "id": "document_id",
+    "name": "Contract Agreement",
+    "status": "pending",
+    "ownerId": "user_id",
+    "owner": {
+      "id": "user_id",
+      "name": "John Doe",
+      "email": "john@example.com"
+    },
+    "createdAt": "2023-04-01T10:30:00Z",
+    "updatedAt": "2023-04-01T10:30:00Z"
+  }
+]
+```
+
+### Get Document By ID
+
+Retrieves a specific document by its ID.
+
+```
+GET /documents/:id
+```
+
+**Response**
+
+```json
+{
+  "id": "document_id",
+  "name": "Contract Agreement",
+  "status": "pending",
+  "content": "Base64 encoded document content",
+  "version": 1,
+  "ownerId": "user_id",
+  "createdAt": "2023-04-01T10:30:00Z",
+  "updatedAt": "2023-04-01T10:30:00Z"
+}
+```
+
+### Upload Document
+
+Uploads a new document to the system.
+
+```
+POST /documents
+```
+
+**Request Body**
+
+```json
+{
+  "name": "Contract Agreement",
+  "file": "Base64 encoded file"
+}
+```
+
+**Response**
+
+```json
+{
+  "id": "document_id",
+  "name": "Contract Agreement",
+  "status": "draft",
+  "ownerId": "user_id",
+  "createdAt": "2023-04-01T10:30:00Z"
+}
+```
+
+### Download Document
+
+Downloads a document file.
+
+```
+GET /documents/:id/file
+```
+
+Returns the document file as a downloadable response.
+
+### Get Document Permissions
+
+Retrieves all permissions for a specific document.
+
+```
+GET /documents/:id/permissions
+```
+
+**Response**
+
+```json
+[
+  {
+    "userId": "user_id",
+    "userName": "John Doe",
+    "userEmail": "john@example.com",
+    "permission": "view" // Can be "view", "edit", "sign", or "share"
+  }
+]
+```
+
+### Share Document
+
+Grants a user permission to access a document.
+
+```
+POST /documents/:id/share
+```
+
+**Request Body**
+
+```json
+{
+  "email": "recipient@example.com",
+  "name": "Recipient Name",
+  "permission": "view" // Can be "view", "edit", "sign", or "share"
+}
+```
+
+**Response**
+
+```json
+{
+  "success": true,
+  "message": "Document shared successfully"
+}
+```
+
+## User Endpoints
+
+### Get User Profile
+
+Retrieves the authenticated user's profile.
+
+```
+GET /auth/user
+```
+
+**Response**
+
+```json
+{
+  "id": "user_id",
+  "name": "John Doe",
+  "email": "john@example.com",
+  "picture": "https://example.com/profile.jpg"
+}
+```
+
+### Register User
+
+Creates a new user account.
+
+```
+POST /auth/register
+```
+
+**Request Body**
+
+```json
+{
+  "name": "John Doe",
+  "email": "john@example.com",
+  "password": "securepassword"
+}
+```
+
+**Response**
+
+```json
+{
+  "id": "user_id",
+  "name": "John Doe",
+  "email": "john@example.com",
+  "token": "jwt_token"
+}
+```
+
+### User Login
+
+Authenticates a user and returns a token.
+
+```
+POST /auth/login
+```
+
+**Request Body**
+
+```json
+{
+  "email": "john@example.com",
+  "password": "securepassword"
+}
+```
+
+**Response**
+
+```json
+{
+  "id": "user_id",
+  "name": "John Doe",
+  "email": "john@example.com",
+  "token": "jwt_token"
+}
+```
+
+## Signature Endpoints
+
+### Create Signature Request
+
+Creates a new signature request for a document.
+
+```
+POST /documents/:id/signatures
+```
+
+**Request Body**
+
+```json
+{
+  "signers": [
+    {
+      "email": "signer@example.com",
+      "name": "Signer Name",
+      "order": 1 // Order in which this person should sign
+    }
+  ],
+  "message": "Please sign this document",
+  "expirationDate": "2023-05-01T00:00:00Z" // Optional
+}
+```
+
+**Response**
+
+```json
+{
+  "id": "signature_request_id",
+  "documentId": "document_id",
+  "status": "pending",
+  "signers": [
+    {
+      "email": "signer@example.com",
+      "name": "Signer Name",
+      "status": "pending",
+      "order": 1
+    }
+  ],
+  "createdAt": "2023-04-01T10:30:00Z"
+}
+```
+
+### Get Signature Status
+
+Retrieves the status of a signature request.
+
+```
+GET /signatures/:id
+```
+
+**Response**
+
+```json
+{
+  "id": "signature_request_id",
+  "documentId": "document_id",
+  "status": "completed",
+  "signers": [
+    {
+      "email": "signer@example.com",
+      "name": "Signer Name",
+      "status": "signed",
+      "signedAt": "2023-04-02T15:45:00Z"
+    }
+  ],
+  "createdAt": "2023-04-01T10:30:00Z",
+  "completedAt": "2023-04-02T15:45:00Z"
+}
+```
+
+### Sign Document
+
+Signs a document (for the authenticated user).
+
+```
+POST /signatures/:id/sign
+```
+
+**Request Body**
+
+```json
+{
+  "signature": "Base64 encoded signature image or data",
+  "signatureType": "drawn" // Can be "drawn", "typed", or "uploaded"
+}
+```
+
+**Response**
+
+```json
+{
+  "success": true,
+  "message": "Document signed successfully"
+}
+```
+
+## Error Handling
+
+The API returns standard HTTP status codes:
+
+| Status Code | Description |
+|-------------|-------------|
+| 200 | OK - Request succeeded |
+| 201 | Created - Resource was created successfully |
+| 400 | Bad Request - Invalid request format or parameters |
+| 401 | Unauthorized - Authentication required or invalid |
+| 403 | Forbidden - Valid authentication but insufficient permissions |
+| 404 | Not Found - Resource not found |
+| 422 | Unprocessable Entity - Request validation failed |
+| 500 | Internal Server Error - Something went wrong on the server |
+
+Error responses include a message explaining what went wrong:
+
+```json
+{
+  "error": true,
+  "message": "Document not found"
+}
+``` 
