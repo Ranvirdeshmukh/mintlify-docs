@@ -1,5 +1,6 @@
 {
   "$schema": "https://mintlify.com/schema.json",
+  "theme": "mint",
   "name": "SignPact",
   "logo": {
     "dark": "/logo/dark.png",
