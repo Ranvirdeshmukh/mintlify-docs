@@ -46,26 +46,27 @@
     }
   ],
   "navigation": {
-    "Getting Started": [
-      "introduction",
-      "quickstart",
-      "faq"
-    ],
-    "Product": [
-      "product/overview",
-      "product/features",
-      "product/security"
-    ],
-    "Pricing": [
-      "pricing/plans",
-      "pricing/enterprise"
-    ],
-    "API Reference": [
-      "api-reference/authentication",
-      "api-reference/endpoints"
-    ],
-    "Integrations": [
-      "integrations/overview"
+    "groups": [
+      {
+        "group": "Getting Started",
+        "pages": ["introduction", "quickstart", "faq"]
+      },
+      {
+        "group": "Product",
+        "pages": ["product/overview", "product/features", "product/security"]
+      },
+      {
+        "group": "Pricing",
+        "pages": ["pricing/plans", "pricing/enterprise"]
+      },
+      {
+        "group": "API Reference",
+        "pages": ["api-reference/authentication", "api-reference/endpoints"]
+      },
+      {
+        "group": "Integrations",
+        "pages": ["integrations/overview"]
+      }
     ]
   },
   "footerSocials": {
