@@ -1,0 +1,116 @@
+---
+title: 'Integrations Overview'
+description: 'Learn about SignPact integrations with other services'
+---
+
+# Integrations Overview
+
+SignPact is designed to work seamlessly with your existing tools and workflows. Here's an overview of our current and planned integrations.
+
+## Authentication Integrations
+
+### Google OAuth
+
+SignPact currently supports Google OAuth for user authentication, allowing users to sign in with their Google accounts. This is implemented in our frontend using the `@react-oauth/google` library:
+
+```jsx
+<GoogleOAuthProvider clientId="92668879435-qftp70jcjucam3jkgd0b1er3fv43n28t.apps.googleusercontent.com">
+  <AuthProvider>
+    {/* Application content */}
+  </AuthProvider>
+</GoogleOAuthProvider>
+```
+
+## Document Storage Integrations
+
+SignPact can integrate with popular cloud storage services to access and manage your documents.
+
+### Google Drive Integration
+
+Import documents directly from Google Drive or save signed documents back to your Drive account.
+
+**Current Implementation Status**: Planned
+
+### Dropbox Integration
+
+Connect your Dropbox account to easily import documents into SignPact or save completed documents.
+
+**Current Implementation Status**: Planned
+
+### OneDrive Integration
+
+Seamlessly integrate with Microsoft OneDrive for business document management.
+
+**Current Implementation Status**: Planned
+
+## CRM & Business Tool Integrations
+
+Connect SignPact with your existing business tools to streamline your document workflows.
+
+### Salesforce Integration
+
+Send contracts for signature directly from Salesforce and update records automatically when documents are completed.
+
+**Current Implementation Status**: Planned
+
+### HubSpot Integration
+
+Create and send documents for signature from within HubSpot, with automatic contact and deal updates.
+
+**Current Implementation Status**: Planned
+
+## API Integration
+
+SignPact offers a comprehensive API for custom integrations with your own systems and workflows.
+
+### RESTful API
+
+Our RESTful API allows developers to integrate SignPact's document and signature capabilities into custom applications.
+
+**Current Implementation Status**: Available (see [API Reference](/api-reference/authentication))
+
+Features available via API:
+- Document management (upload, retrieve, share)
+- Electronic signature requests and tracking
+- User management
+- Permissions and access control
+
+## Email Notifications
+
+SignPact sends automated email notifications for various document events:
+
+- Document shared with a user
+- Signature request sent
+- Document signed by a party
+- Document fully completed
+- Reminders for pending signatures
+
+**Current Implementation Status**: Available
+
+## Upcoming Integrations
+
+We're actively working on expanding our integration capabilities:
+
+### Single Sign-On (SSO)
+
+Enterprise-grade SSO using SAML 2.0 or OpenID Connect.
+
+**Current Implementation Status**: Planned for Enterprise tier
+
+### Payment Processing
+
+Integration with payment processors like Stripe and PayPal to enable automated invoice generation and payment tracking for contracts.
+
+**Current Implementation Status**: Planned
+
+### Document Templates
+
+Integration with template libraries and services for quick document creation.
+
+**Current Implementation Status**: Planned
+
+## Custom Integration
+
+Need a custom integration not listed here? Enterprise customers can request custom integrations tailored to their specific requirements and workflows.
+
+Contact our sales team to discuss your integration needs. 
