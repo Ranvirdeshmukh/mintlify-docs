@@ -12,6 +12,9 @@
     "light": "#4e7bea",
     "dark": "#1e3a8a"
   },
+  "modeToggle": {
+    "default": "light"
+  },
   "topbarLinks": [
     {
       "name": "Back to App",
