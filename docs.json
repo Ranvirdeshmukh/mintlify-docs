@@ -1,6 +1,6 @@
 {
   "$schema": "https://mintlify.com/schema.json",
-  "theme": "mint",
+  "theme": "light",
   "name": "SignPact",
   "logo": {
     "dark": "/logo/dark.png",
@@ -10,7 +10,15 @@
   "colors": {
     "primary": "#1e40af",
     "light": "#4e7bea",
-    "dark": "#1e3a8a"
+    "dark": "#1e3a8a",
+    "background": {
+      "dark": "#333333",
+      "light": "#ffffff"
+    },
+    "anchors": {
+      "from": "#1e40af",
+      "to": "#3b82f6"
+    }
   },
   "topbarLinks": [
     {
